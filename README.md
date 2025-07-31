@@ -1,7 +1,8 @@
 # Knowledge-RAG
 
 A prototype Retrieval-Augmented Generation (RAG) system for querying books and documents.  
-This project demonstrates ingestion, caching, chunking, embeddings, semantic retrieval, and LLM-based question answering using FAISS, CrossEncoder reranking, and Ollama.
+This project demonstrates ingestion, caching, chunking, embeddings, semantic retrieval, and LLM-based question answering using FAISS, CrossEncoder reranking, and Ollama.  
+The codebase is modularized with reusable utility modules for ingestion, embeddings, and querying, and includes a Streamlit UI with document upload.
 
 ---
 
@@ -16,6 +17,10 @@ This project demonstrates ingestion, caching, chunking, embeddings, semantic ret
 - CrossEncoder reranker for improved relevance ranking  
 - Ollama integration for generating natural language answers  
 - Interactive CLI loop: ask multiple questions until you type `exit`  
+- Streamlit interface with two modes:
+  - Use Pre-Indexed Books (query your cached FAISS index)
+  - Upload New Document (PDF/EPUB) to parse, chunk, embed, and query on the fly  
+- Modular `utils/` folder containing reusable ingestion, embedding, and query logic  
 - Git-friendly repo: ignores heavy book files but keeps folder structure visible with .gitkeep  
 
 ---
@@ -28,8 +33,8 @@ This project demonstrates ingestion, caching, chunking, embeddings, semantic ret
 - **Reranking:** CrossEncoder (`ms-marco-MiniLM-L-12-v2`)  
 - **Parsing:** pypdf, ebooklib, BeautifulSoup4  
 - **LLM Inference:** Ollama (Mistral)  
-- **Environment:** Virtualenv, Git  
-- **Frontend (Planned):** Streamlit for interactive Q&A  
+- **Frontend:** Streamlit (interactive UI with document upload)  
+- **Project Structure:** Modular utilities for maintainability (`utils/`)  
 
 ---
 
@@ -43,12 +48,18 @@ knowledge-rag/
 ├── processed/           # Auto-generated plain text files (ignored by git)
 │   └── .gitkeep
 │
+├── utils/               # Modular utility modules
+│   ├── text_utils.py    # Parsing, cleaning, chunking
+│   ├── embed_utils.py   # Embeddings, FAISS index build/load
+│   └── query_utils.py   # Retrieval, reranking, Ollama integration
+│
 ├── faiss_index.bin      # FAISS vector index (auto-generated, git-ignored)
 ├── mapping.json         # Mapping FAISS IDs to books/chunks
 │
-├── ingest.py            # Script to parse and cache book content
-├── embed.py             # Script to chunk text, embed, and build FAISS index
-├── query.py             # Script for interactive Q&A with Ollama
+├── ingest.py            # Driver for ingestion & caching
+├── embed.py             # Driver for embedding + FAISS index building
+├── query.py             # Interactive CLI Q&A with Ollama
+├── app.py               # Streamlit web app (pre-indexed mode + document upload)
 ├── requirements.txt     # Python dependencies
 ├── .gitignore           # Ignores venv, book files, caches
 └── README.md            # Project documentation
@@ -81,10 +92,15 @@ knowledge-rag/
 6. Build Embeddings and FAISS Index  
    python embed.py  
 
-7. Run Interactive Query Mode  
+7. Run CLI Q&A  
    python query.py  
-   - Type your questions one by one  
+   - Type questions interactively  
    - Type `exit` to quit  
+
+8. Run Streamlit App  
+   streamlit run app.py  
+   - Choose "Use Pre-Indexed Books" to query your library  
+   - Choose "Upload New Document" to parse and query a new PDF/EPUB instantly  
 
 ---
 
@@ -110,10 +126,10 @@ Preview: local production disasters, collapse ensued (R. E. W. Adams 1971: 164, 
 
 ## 🛠️ Next Steps
 
-- [ ] Build Streamlit UI for interactive Q&A  
-- [ ] Add support for multi-document queries with filtering  
+- [ ] Add support for merging uploaded documents with pre-indexed library  
 - [ ] Provide configuration options for FAISS-only vs CrossEncoder reranked results  
 - [ ] Optional: integrate OpenAI GPT fallback when Ollama is unavailable  
+- [ ] Add demo screenshots/GIFs for GitHub presentation  
 
 ---
 
